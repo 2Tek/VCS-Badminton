@@ -77,3 +77,21 @@ The authentication system used for this project is Auth0. `./src/app/services/au
 ### Authorization
 
 The Auth0 JWT includes claims for permissions based on the user's role within the Auth0 system. This project makes use of these claims using the `auth.can(permission)` method which checks if particular permissions exist within the JWT permissions claim of the currently logged in user. This method is defined in  `./src/app/services/auth.service.ts` and is then used to enable and disable buttons in `./src/app/pages/drink-menu/drink-form/drink-form.html`.
+
+### Troubleshooting
+In case ionic cannot start properlu due to legacy openssl issue
+can set an environment variable to force Node.js to use legacy OpenSSL algorithms. This can be done on a per-session basis, or you can add it permanently.
+1. Temporary Solution (in the current session): Run this command before starting your Angular project:
+```bash
+$env:NODE_OPTIONS="--openssl-legacy-provider"
+
+```
+2. Permanent Solution (for all sessions): Add this environment variable to your system or user environment variables:
+```bash
+Go to Control Panel > System and Security > System > Advanced system settings.
+Click on Environment Variables.
+Under System variables, click New and add:
+Variable name: NODE_OPTIONS
+Variable value: --openssl-legacy-provider
+Click OK to save and restart your terminal or IDE.
+```
