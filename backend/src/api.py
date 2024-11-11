@@ -1,202 +1,308 @@
-import os
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
 import json
 from flask_cors import CORS
 
-from .database.models import db_drop_and_create_all, setup_db, Drink
+from .database.models import db_drop_all, setup_db, Court, CourtRegistration
 from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-'''
-@TODO uncomment the following line to initialize the datbase
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
-'''
-db_drop_and_create_all()
+# Database reset for testing
+db_drop_all()
 
-# ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
-@app.route('/drinks', methods=["GET"])
-def get_drinks():
-     try:
-        select_drinks = Drink.query.order_by(Drink.id).all()
-        print("Select drinks:",select_drinks)
-        if len(select_drinks) ==0:
-            return jsonify({
-                'success':True,
-                'drinks':[]
-            })
-        else:
-            formatted_drinks = [drink.short() for drink in select_drinks ]
-            return jsonify({
-                'success':True,
-                'drinks':formatted_drinks
-            })
-     except Exception as e:
-         print("get drinks exception",e)
-
-'''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
-@app.route('/drinks-detail', methods=["GET"])
-@requires_auth('get:drinks-detail')
-def get_drinks_details(payload):
-     try:
-        select_drinks = Drink.query.order_by(Drink.id).all()   
-        print("Select drinks:",select_drinks)
-        if len(select_drinks) ==0:
-            # return success with empty drinks
-            return jsonify({
-                'success':True,
-                'drinks':[]
-            })
-        else:
-            formatted_drinks = [drink.long() for drink in select_drinks ]
-            return jsonify({
-                'success':True,
-                'drinks':formatted_drinks
-            })
-     except Exception as e:
-         print("get drinks-details exception",e)
-
-'''
-@TODO implement endpoint
-    POST /drinks
-        it should create a new row in the drinks table
-        it should require the 'post:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
-        or appropriate status code indicating reason for failure
-'''
-@app.route('/drinks',methods=["POST"])
-@requires_auth('post:drink')
-def add_new_drink(payload):
-    body = request.get_json()
-    new_title = body.get('title')
-    new_recipe = body.get('recipe')
-
-    print("Body:", body)
-    print(new_title, new_recipe)
-
-    # Check for valid title and recipe
-    if new_title is None or new_recipe is None:
-        return jsonify({
-            'success': False,
-            'message': "Title and recipe are required"
-        })
-
-    # Check to make sure title is unique
-    if Drink.query.filter(Drink.title == new_title).one_or_none() is not None:
-        return jsonify({
-            'success': False,
-            'message': "Drink is already in the database"
-        })
-    # Ensure `new_recipe` is in list format as expected by the model
+# COURT ROUTES
+# Create a new court
+@app.route('/courts', methods=["POST"])
+@requires_auth('post:court')
+def create_court(payload):
     try:
-        # Wrap `new_recipe` in a list if it isn't already
-        if not isinstance(new_recipe, list):
-            new_recipe = [new_recipe]
+        body = request.get_json()
+        name = body.get('name')
+        court_no = body.get('court_no')
+        date = body.get('date')
+        time = body.get('time')
+        max_players = body.get('max_players')
+        level = body.get('level')
 
-        # Convert new_recipe to JSON string for storage
-        drinks = Drink(title=new_title, recipe=json.dumps(new_recipe))
-        drinks.insert()
+        if not name or not court_no or not date or not time or not max_players or not level:
+            abort(400, 'All fields are required.')
+
+        # get the last court by id 
+        court = Court.query.order_by(Court.id.desc()).first()
+        if not court:
+            id = 0
+        else:
+            id = court.id
+
+        court = Court(
+            id = id + 1,
+            name=name,
+            court_no=court_no,
+            date=date,
+            time=time,
+            max_players=max_players,
+            level=level
+        )
+        court.insert()
 
         return jsonify({
             'success': True,
-            'drinks': [drinks.long()]
+            'court': court
         })
     except Exception as e:
-        print("Post exception:", e)
+        print(f"Create court exception: {e}")
         abort(422)
 
-'''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-        or appropriate status code indicating reason for failure
-'''
-@app.route('/drinks/<int:id>',methods=["PATCH"])
-@requires_auth('patch:drinks')
-def update_drinks(payload,id):
-    body = request.get_json()
-    # if body is None abort with error 403
-    if body is None:
-        abort(403)
-    print("Body:",body)
-    new_tile = body.get('title')
-    new_recipe =  body.get('recipe')
-    drinks = Drink.query.filter(Drink.id==str(id)).all()
-    print("Drinks:",drinks)
+# Get all courts
+@app.route('/courts', methods=["GET"])
+@requires_auth('get:courts')
+def get_courts(payload):
     try:
-        if not drinks:
-            abort(404)
-        else:
-            drinks = drinks[0]
-            drinks.title=new_tile
-            drinks.update() 
-            return jsonify({
-                'success':True,
-                'drinks':[drinks.long()]
-            })
-    except Exception as e:
-        print("Patch exception",e)
-
-
-'''
-@TODO implement endpoint
-    DELETE /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should delete the corresponding row for <id>
-        it should require the 'delete:drinks' permission
-    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
-        or appropriate status code indicating reason for failure
-'''
-@app.route('/drinks/<int:id>',methods=["DELETE"])
-@requires_auth('delete:drinks')
-def delete_drinks(payload,id):
-    try:
-        drinks = Drink.query.get(id)
-        if drinks is None:
-            abort(404)
-        else:
-            drinks.delete()
+        courts = Court.query.order_by(Court.id).all()
 
         return jsonify({
-                'success':True,
-                'delete':drinks.id
-            })
+            'success': True,
+            'courts': courts
+        })
     except Exception as e:
-        print("Delete Exception:",e)
+        print(f"Get courts exception: {e}")
         abort(422)
 
-# Error Handling
-'''
-Example error handling for unprocessable entity
-'''
+# Update a court
+@app.route('/courts/<int:id>', methods=["PATCH"])
+@requires_auth('patch:courts')
+def update_court(payload, id):
+    try:
+        body = request.get_json()
+        court = Court.query.get(id)
 
+        if not court:
+            abort(404)
+
+        court.name = body.get('name', court.name)
+        court.court_no = body.get('court_no', court.court_no)
+        court.date = body.get('date', court.date)
+        court.time = body.get('time', court.time)
+        court.max_players = body.get('max_players', court.max_players)
+        court.level = body.get('level', court.level)
+        
+        court.update()
+
+        return jsonify({
+            'success': True,
+            'court': court
+        })
+    except Exception as e:
+        print(f"Update court exception: {e}")
+        abort(422)
+
+# Delete a court
+@app.route('/courts/<int:id>', methods=["DELETE"])
+@requires_auth('delete:courts')
+def delete_court(payload, id):
+    try:
+        court = Court.query.get(id)
+        if not court:
+            abort(404)
+
+        court.delete()
+
+        #delete all registrations for this court
+        registrations = CourtRegistration.query.filter_by(court_id=id).all()
+        for registration in registrations:
+            registration.delete()
+
+        return jsonify({
+            'success': True,
+            'delete': id
+        })
+
+    except Exception as e:
+        print(f"Delete court exception: {e}")
+        abort(422)
+
+# COURT REGISTRATION ROUTES
+# Register a player to a court
+@app.route('/court-registrations', methods=["POST"])
+@requires_auth('post:court-registration')
+def create_court_registration(payload):
+    try:
+        body = request.get_json()
+        court_id = body.get('court_id')
+        name = body.get('name')
+        player_unique_id = body.get('player_unique_id')
+        role = body.get('role')
+
+        if not court_id or not name or not player_unique_id:
+            abort(400, 'All fields are required.')
+        
+        # get the last registration by id
+        court_registration = CourtRegistration.query.order_by(CourtRegistration.id.desc()).first()
+        if not court_registration:
+            id = 0
+        else:
+            id = court_registration.id
+
+        # get current time in SGT time zone to string
+        reg_time = datetime.now(timezone('Asia/Singapore')).strftime('%Y-%m-%d %H:%M:%S')
+
+        # get the max players of selected court
+        court = Court.query.get(court_id)
+        if not court:
+            abort(404, 'Court not found.')
+        else:
+            max_players = court.max_players
+        
+        # get current number of players registered for selected court
+        registrations = CourtRegistration.query.filter_by(court_id=court_id).all()
+
+        # avoid duplicate registrations
+        for registration in registrations:
+                if registration.player_unique_id == player_unique_id and registration.name == name:
+                    abort(400, 'Player already registered for this court.')
+        
+        # check if the court is full for registration to be added to waitlist
+        if len(registrations) >= max_players:
+            role = 'Waitlist'
+        else:
+            role = 'Player'
+
+        court_registration = CourtRegistration(
+            id = id + 1,
+            court_id=court_id,
+            name=name,
+            player_unique_id=player_unique_id,
+            role=role,
+            reg_date_time=reg_time
+        )
+        court_registration.insert()
+
+        return jsonify({
+            'success': True,
+            'court_registration': court_registration.long()
+        })
+    except Exception as e:
+        print(f"Create court registration exception: {e}")
+        abort(422)
+
+# Get all registrations for a specific court
+@app.route('/court-registrations/<int:court_id>', methods=["GET"])
+@requires_auth('get:court-registrations')
+def get_court_registrations(payload, court_id):
+    try:
+        registrations = CourtRegistration.query.filter_by(court_id=court_id).all()
+
+        return jsonify({
+            'success': True,
+            'registrations': registrations
+        })
+    except Exception as e:
+        print(f"Get court registrations exception: {e}")
+        abort(422)
+
+# Update a court registration
+@app.route('/court-registrations/<string:player_unique_id>', methods=["PATCH"])
+@requires_auth('patch:court-registrations')
+def update_court_registration(payload, player_unique_id):
+    try:
+        body = request.get_json()
+        registration = CourtRegistration.query.get(player_unique_id)
+
+        if not registration:
+            abort(404, 'Registration not found.')
+        
+        # get current time in SGT time zone to string
+        reg_time = datetime.now(timezone('Asia/Singapore')).strftime('%Y-%m-%d %H:%M:%S')
+
+        registration.name = body.get('name', registration.name)
+        registration.role = body.get('role', registration.role)
+        registration.reg_date_time = reg_time
+        
+        registration.update()
+
+        return jsonify({
+            'success': True,
+            'registration': registration
+        })
+    except Exception as e:
+        print(f"Update court registration exception: {e}")
+        abort(422)
+
+# Delete a court registration
+@app.route('/court-registrations/<string:player_unique_id>', methods=["DELETE"])
+@requires_auth('delete:court-registrations')
+def delete_court_registration(payload, player_unique_id):
+    try:
+        registration = CourtRegistration.query.get(player_unique_id)
+        if not registration:
+            abort(404)
+
+        registration.delete()
+
+        return jsonify({
+            'success': True,
+            'delete': id
+        })
+    except Exception as e:
+        print(f"Delete court registration exception: {e}")
+        abort(422)
+# Delete a court registration
+@app.route('/court-registrations/<string:player_unique_id>', methods=["DELETE"])
+@requires_auth('delete:court-registrations')
+def delete_court_registration(payload, player_unique_id):
+    try:
+        registration = CourtRegistration.query.get(player_unique_id)
+        if not registration:
+            abort(404)
+
+        registration.delete()
+
+        return jsonify({
+            'success': True,
+            'delete': id
+        })
+    except Exception as e:
+        print(f"Delete court registration exception: {e}")
+        abort(422)
+
+#Delete speicific court registration by court_id and name
+@app.route('/court-registrations/<int:court_id>/<string:name>', methods=["DELETE"])
+@requires_auth('delete:court-registrations')
+def delete_court_registration_by_court_id_name(payload, court_id, name):
+    try:
+        registration = CourtRegistration.query.filter_by(court_id=court_id, name=name).first()
+        if not registration:
+            abort(404)
+
+        registration.delete()
+
+        return jsonify({
+            'success': True,
+            'delete': id
+        })
+    except Exception as e:
+        print(f"Delete court registration exception: {e}")
+        abort(422)
+
+# Error handling
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bad request"
+    }), 400
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+    }), 404
 
 @app.errorhandler(422)
 def unprocessable(error):
@@ -206,39 +312,8 @@ def unprocessable(error):
         "message": "unprocessable"
     }), 422
 
-
-'''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
-    each error handler should return (with approprate messages):
-             jsonify({
-                    "success": False,
-                    "error": 404,
-                    "message": "resource not found"
-                    }), 404
-
-'''
-
-'''
-@TODO implement error handler for 404
-    error handler should conform to general task above
-'''
-@app.errorhandler(404)
-def not_found(error):
-    return jsonify ({'success': False, 'error': 404,'message': 'Data not found'
-                     }),404
-    
-@app.errorhandler(422)
-def unprocessed(error):
-    return jsonify({'success': False, 'error': 404,'message': 'The request can not be processed'
-                    }),422
-
-'''
-@TODO implement error handler for AuthError
-    error handler should conform to general task above
-'''
 @app.errorhandler(AuthError)
 def handle_auth_error(error):
-
     response = jsonify(error.error)
     response.status_code = error.status_code
     return response
