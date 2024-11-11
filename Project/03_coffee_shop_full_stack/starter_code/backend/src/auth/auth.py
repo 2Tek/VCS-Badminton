@@ -5,9 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'udacity-project-fswd.us.auth0.com'
+AUTH0_DOMAIN = 'dev-i23mn0tn47hz887e.us.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'http://localhost:8080'
+API_AUDIENCE = 'https://udacity-coffee-auth0-api/'
 
 ## AuthError Exception
 '''
@@ -74,6 +74,7 @@ def get_token_auth_header():
     return true otherwise
 '''
 def check_permissions(permission, payload):
+    print("Payload:",payload)
     if 'permissions' not in payload:
                         raise AuthError({
                             'code': 'invalid_claims',

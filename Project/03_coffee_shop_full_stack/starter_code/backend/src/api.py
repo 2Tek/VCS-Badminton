@@ -31,12 +31,15 @@ db_drop_and_create_all()
 @app.route('/drinks', methods=["GET"])
 def get_drinks():
      try:
-        select_drinks = Drink.query.order_by(Drink.id).all()   
-        formatted_drinks = [drink.short() for drink in select_drinks ]
+        select_drinks = Drink.query.order_by(Drink.id).all()
         print("Select drinks:",select_drinks)
         if len(select_drinks) ==0:
-            abort(404)
-        else:    
+            return jsonify({
+                'success':True,
+                'drinks':[]
+            })
+        else:
+            formatted_drinks = [drink.short() for drink in select_drinks ]
             return jsonify({
                 'success':True,
                 'drinks':formatted_drinks
@@ -57,11 +60,15 @@ def get_drinks():
 def get_drinks_details(payload):
      try:
         select_drinks = Drink.query.order_by(Drink.id).all()   
-        formatted_drinks = [drink.long() for drink in select_drinks ]
         print("Select drinks:",select_drinks)
         if len(select_drinks) ==0:
-            abort(404)
-        else:    
+            # return success with empty drinks
+            return jsonify({
+                'success':True,
+                'drinks':[]
+            })
+        else:
+            formatted_drinks = [drink.long() for drink in select_drinks ]
             return jsonify({
                 'success':True,
                 'drinks':formatted_drinks
@@ -79,25 +86,45 @@ def get_drinks_details(payload):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks',methods=["POST"])
-@requires_auth('post:drinks')
+@requires_auth('post:drink')
 def add_new_drink(payload):
-        body = request.get_json()
-        new_tile = body.get('title')
-        new_recipe =  body.get('recipe')
+    body = request.get_json()
+    new_title = body.get('title')
+    new_recipe = body.get('recipe')
 
-        if(new_tile or new_recipe) == None:
-            abort(422)
-        try:    
-            drinks = Drink(title=new_tile,recipe=new_recipe)   
-            drinks.insert()
+    print("Body:", body)
+    print(new_title, new_recipe)
 
-            return jsonify({
-                'success':True,
-                'drinks':[drinks.long()]
-            })
-        except Exception as e:
-            print("Post exce__",e)
-            abort(422)
+    # Check for valid title and recipe
+    if new_title is None or new_recipe is None:
+        return jsonify({
+            'success': False,
+            'message': "Title and recipe are required"
+        })
+
+    # Check to make sure title is unique
+    if Drink.query.filter(Drink.title == new_title).one_or_none() is not None:
+        return jsonify({
+            'success': False,
+            'message': "Drink is already in the database"
+        })
+    # Ensure `new_recipe` is in list format as expected by the model
+    try:
+        # Wrap `new_recipe` in a list if it isn't already
+        if not isinstance(new_recipe, list):
+            new_recipe = [new_recipe]
+
+        # Convert new_recipe to JSON string for storage
+        drinks = Drink(title=new_title, recipe=json.dumps(new_recipe))
+        drinks.insert()
+
+        return jsonify({
+            'success': True,
+            'drinks': [drinks.long()]
+        })
+    except Exception as e:
+        print("Post exception:", e)
+        abort(422)
 
 '''
 @TODO implement endpoint
@@ -114,15 +141,20 @@ def add_new_drink(payload):
 @requires_auth('patch:drinks')
 def update_drinks(payload,id):
     body = request.get_json()
+    # if body is None abort with error 403
+    if body is None:
+        abort(403)
+    print("Body:",body)
     new_tile = body.get('title')
     new_recipe =  body.get('recipe')
     drinks = Drink.query.filter(Drink.id==str(id)).all()
+    print("Drinks:",drinks)
     try:
         if not drinks:
             abort(404)
         else:
+            drinks = drinks[0]
             drinks.title=new_tile
-            drinks.recipe=new_recipe
             drinks.update() 
             return jsonify({
                 'success':True,

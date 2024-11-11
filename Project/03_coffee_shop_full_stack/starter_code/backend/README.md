@@ -46,7 +46,14 @@ From within the `./src` directory first ensure you are working using your create
 Each time you open a new terminal session, run:
 
 ```bash
+#on Mac/Linux
 export FLASK_APP=api.py;
+
+#on Windows powershell
+$env:FLASK_APP = "api.py"
+
+#on Windows command prompt
+set FLASK_APP=api.py
 ```
 
 To run the server, execute:
