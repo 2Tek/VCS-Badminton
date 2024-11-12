@@ -249,24 +249,6 @@ def delete_court_registration(payload, player_unique_id):
     except Exception as e:
         print(f"Delete court registration exception: {e}")
         abort(422)
-# Delete a court registration
-@app.route('/court-registrations/<string:player_unique_id>', methods=["DELETE"])
-@requires_auth('delete:court-registrations')
-def delete_court_registration(payload, player_unique_id):
-    try:
-        registration = CourtRegistration.query.get(player_unique_id)
-        if not registration:
-            abort(404)
-
-        registration.delete()
-
-        return jsonify({
-            'success': True,
-            'delete': id
-        })
-    except Exception as e:
-        print(f"Delete court registration exception: {e}")
-        abort(422)
 
 #Delete speicific court registration by court_id and name
 @app.route('/court-registrations/<int:court_id>/<string:name>', methods=["DELETE"])
