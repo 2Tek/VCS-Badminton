@@ -80,7 +80,11 @@ def check_permissions(permission, payload):
                             'code': 'invalid_claims',
                             'description': 'Permissions not included in JWT.'
                         }, 400)
-
+    # check if permissions included "*:*"" is in the permissions, return True
+    if "*:*" == in payload['permissions']:
+        return True
+        
+    # check if the permission is in the permissions array
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
