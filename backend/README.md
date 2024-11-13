@@ -1,4 +1,4 @@
-# Coffee Shop Backend
+# Court Registration System
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ Installl Virtual Environment to install project dependency
 ```bash
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 
-pyenv local 3.7
+pyenv local 3.7.9
 
 python -m venv .venv
 
@@ -76,28 +76,34 @@ The `--reload` flag will detect file changes and restart the server automaticall
      - Enable RBAC
      - Enable Add Permissions in the Access Token
 5. Create new API permissions:
-   - `get:drinks`
-   - `get:drinks-detail`
-   - `post:drinks`
-   - `patch:drinks`
-   - `delete:drinks`
+    - "delete:court-registrations"
+    - "delete:courts"
+    - "get:court-registrations"
+    - "get:courts"
+    - "patch:court-registrations"
+    - "patch:courts"
+    - "post:court"
+    - "post:court-registration"
 6. Create new roles for:
-   - Barista
-     - can `get:drinks-detail`
-     - can `get:drinks`
-   - Manager
+   - player:
+     - can `delete:court-registrations`
+     - can `get:court-registrations`
+     - can `patch:court-registrations`
+     - can `post:court-registration`
+   - Moderator
      - can perform all actions
 7. Test your endpoints with [Postman](https://getpostman.com).
    - Register 2 users - assign the Barista role to one and Manager role to the other.
    - Sign into each account and make note of the JWT.
    - Import the postman collection `./starter_code/backend/udacity-fsnd-udaspicelatte.postman_collection.json`
-   - Right-clicking the collection folder for barista and manager, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
+   - Right-clicking the collection folder for player and moderator, navigate to the authorization tab, and including the JWT in the token field (you should have noted these JWTs).
    - Run the collection and correct any errors.
    - Export the collection overwriting the one we've included so that we have your proper JWTs during review!
 
-### Implement The Server
-
-There are `@TODO` comments throughout the `./backend/src`. We recommend tackling the files in order and from top to bottom:
-
-1. `./src/auth/auth.py`
-2. `./src/api.py`
+# Running Unit Test
+1. While in virtual environment, change to source directory
+2. Execute command to run test
+```
+pytest test/
+```
+3. Current test will  output 3 PASS and 3 FAIL for project capstone purose
