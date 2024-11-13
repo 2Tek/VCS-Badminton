@@ -21,3 +21,8 @@ Flask-Cors==3.0.8
 SQLAlchemy==1.4.41
 python-jose
 pytz
+#for unittest
+cryptography
+requests
+pytest
+pytest-mock
