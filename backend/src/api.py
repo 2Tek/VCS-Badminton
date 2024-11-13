@@ -243,7 +243,38 @@ def create_court_registration(payload):
     except Exception as e:
         print(f"Create court registration exception: {e}")
         abort(422)
+# Get all registrations from all court
+@app.route('/court-registrations', methods=["GET"])
+@requires_auth('get:court-registrations')
+def get_all_registrations(payload):
+    try:
+        # get all available courts
+        courts = Court.query.order_by(Court.id).all()
+        # for each court, use its court_id to get all registrations
+        all_registrations = []
+        for court in courts:
+            registrations = CourtRegistration.query.filter_by(court_id=court.id).all()
+            #format registrations to JSON serializable format
+            formatted_registrations = [
+                {
+                    'id': registration.id,
+                    'court_id': registration.court_id,
+                    'name': registration.name,
+                    'player_unique_id': registration.player_unique_id,
+                    'role': registration.role,
+                    'reg_date_time': registration.reg_date_time
+                }
+                for registration in registrations
+            ]
+            all_registrations.append(formatted_registrations)
 
+        return jsonify({
+            'success': True,
+            'registrations': all_registrations
+        })
+    except Exception as e:
+        print(f"Get all registrations exception: {e}")
+        abort(422)
 # Get all registrations for a specific court
 @app.route('/court-registrations/<int:court_id>', methods=["GET"])
 @requires_auth('get:court-registrations')
