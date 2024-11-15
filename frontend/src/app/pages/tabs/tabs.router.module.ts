@@ -7,18 +7,18 @@ const routes: Routes = [
     path: 'tabs',
     component: TabsPage,
     children: [
-      { path: 'drink-menu', loadChildren: '../drink-menu/drink-menu.module#DrinkMenuPageModule' },
       { path: 'user-page', loadChildren: '../user-page/user-page.module#UserPagePageModule' }, 
+      { path: 'court-registrations', loadChildren: '../court-registrations/court-registrations.module#CourtRegistrationsPageModule' }, // Add this line
       {
         path: '',
-        redirectTo: '/tabs/drink-menu',
+        redirectTo: '/tabs/court-registrations',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/drink-menu',
+    redirectTo: '/tabs/court-registrations',
     pathMatch: 'full'
   }
 ];

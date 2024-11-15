@@ -1,0 +1,23 @@
+<div *ngFor="let court of courts" class="card my-3">
+  <!-- Card Header -->
+  <div class="card-header bg-primary text-white text-center">
+    <h5 class="card-title mb-0">
+      Court ID: {{court.id}} {{court.name}} (No: {{court.court_no}}, Level: {{court.level}}, Max Players: {{court.max_players}})
+    </h5>
+    <p class="card-subtitle">Date: {{court.date}}</p>
+    <p class="card-subtitle">Time: {{court.time}}</p>
+  </div>
+
+  <!-- Card Body -->
+  <div class="card-body">
+    <h6>Registrations:</h6>
+    <ul *ngIf="getRegistrationsForCourt(court.id).length > 0; else noRegistrations">
+      <li *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index">
+        {{i + 1}}. {{reg.name}} ({{reg.role}})
+      </li>
+    </ul>
+    <ng-template #noRegistrations>
+      <p>No registrations found for this court.</p>
+    </ng-template>
+  </div>
+</div>
