@@ -1,23 +1,34 @@
-<div *ngFor="let court of courts" class="card my-3">
-  <!-- Card Header -->
-  <div class="card-header bg-primary text-white text-center">
-    <h5 class="card-title mb-0">
-      Court ID: {{court.id}} {{court.name}} (No: {{court.court_no}}, Level: {{court.level}}, Max Players: {{court.max_players}})
-    </h5>
-    <p class="card-subtitle">Date: {{court.date}}</p>
-    <p class="card-subtitle">Time: {{court.time}}</p>
-  </div>
+<div class="container" >
+  <div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-6 col-12" *ngFor="let court of courts">
+      <div class="card my-3 court-card">
+        <!-- Card Header -->
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            Court ID: {{court.id}} {{court.name}}
+          </h5>
+          <p class="card-subtitle">
+            Court No: {{court.court_no}}, Level: {{court.level}}, Max Players: {{court.max_players}}
+          </p>
+          <p class="card-subtitle">Date & Time: {{court.date}} - {{court.time}}</p>
+        </div>
 
-  <!-- Card Body -->
-  <div class="card-body">
-    <h6>Registrations:</h6>
-    <ul *ngIf="getRegistrationsForCourt(court.id).length > 0; else noRegistrations">
-      <li *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index">
-        {{i + 1}}. {{reg.name}} ({{reg.role}})
-      </li>
-    </ul>
-    <ng-template #noRegistrations>
-      <p>No registrations found for this court.</p>
-    </ng-template>
+        <!-- Card Body -->
+        <div class="card-body">
+          <h6 class="registrations-header">Registrations:</h6>
+          <ul *ngIf="getRegistrationsForCourt(court.id).length > 0; else noRegistrations">
+            <li
+              *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index"
+              [ngClass]="{'player': reg.role === 'Player', 'waitlist': reg.role === 'Waitlist'}"
+            >
+              {{i + 1}}. {{reg.name}} ({{reg.role}})
+            </li>
+          </ul>
+          <ng-template #noRegistrations>
+            <div class="no-registrations">No registrations found for this court.</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
