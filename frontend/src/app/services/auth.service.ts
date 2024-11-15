@@ -77,4 +77,9 @@ export class AuthService {
   can(permission: string) {
     return this.payload && this.payload.permissions && this.payload.permissions.length && this.payload.permissions.indexOf(permission) >= 0;
   }
+
+  //acces id token
+  get_user_id() {
+    return this.payload.sub;
+  }
 }

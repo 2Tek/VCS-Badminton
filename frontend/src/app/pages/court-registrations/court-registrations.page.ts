@@ -50,13 +50,13 @@ export class CourtRegistrationsPage implements OnInit {
   }
 
   checkPermissions() {
-    this.canAddCourt = true;// this.authService.can('post:court'); // Check if the user has permission to add a court
+    this.authService.can('post:court'); // Check if the user has permission to add a court
   }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
-  
+
   submitCourtForm() {
     if (this.newCourt.id && Number.isInteger(this.newCourt.id)) {
       // Update existing court (PATCH)
