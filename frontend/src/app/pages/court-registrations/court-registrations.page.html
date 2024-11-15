@@ -1,5 +1,6 @@
-<div class="container" >
+<div class="container">
   <div class="row">
+    <!-- Existing cards for courts -->
     <div class="col-lg-3 col-md-4 col-sm-6 col-12" *ngFor="let court of courts">
       <div class="card my-3 court-card">
         <!-- Card Header -->
@@ -27,6 +28,44 @@
           <ng-template #noRegistrations>
             <div class="no-registrations">No registrations found for this court.</div>
           </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add New Court Form (Visible only with permission) -->
+    <div *ngIf="canAddCourt" class="col-12 mt-5">
+      <div class="card court-card">
+        <div class="card-header bg-primary text-white">
+          <h5>Add New Court</h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="submitCourtForm()">
+            <div class="form-group">
+              <label for="courtName">Court Name</label>
+              <input type="text" id="courtName" class="form-control" [(ngModel)]="newCourt.name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="courtDate">Date</label>
+              <input type="text" id="courtDate" class="form-control" [(ngModel)]="newCourt.date" name="date" required>
+            </div>
+            <div class="form-group">
+              <label for="courtTime">Time</label>
+              <input type="text" id="courtTime" class="form-control" [(ngModel)]="newCourt.time" name="time" required>
+            </div>
+            <div class="form-group">
+              <label for="courtLevel">Level</label>
+              <input type="text" id="courtLevel" class="form-control" [(ngModel)]="newCourt.level" name="level" required>
+            </div>
+            <div class="form-group">
+              <label for="courtNo">Court No</label>
+              <input type="number" id="courtNo" class="form-control" [(ngModel)]="newCourt.court_no" name="court_no" required>
+            </div>
+            <div class="form-group">
+              <label for="maxPlayers">Max Players</label>
+              <input type="number" id="maxPlayers" class="form-control" [(ngModel)]="newCourt.max_players" name="max_players" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+          </form>
         </div>
       </div>
     </div>

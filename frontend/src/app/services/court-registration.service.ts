@@ -37,11 +37,10 @@ export interface CourtRegistrationResponse {
 })
 export class CourtRegistrationService {
   url = environment.apiServerUrl;
-
   public courtsList: Court[] = [];
   public registrationList: { [courtId: number]: CourtRegistration[] } = {};
-  
-  constructor(private auth: AuthService, private http: HttpClient) { }
+
+  constructor(private auth: AuthService, private http: HttpClient) {}
 
   getHeaders() {
     const headers = {
@@ -84,14 +83,22 @@ export class CourtRegistrationService {
   }
 
   saveCourtRegistration(courtRegistration: Partial<CourtRegistration>) {
-    this.http.post<CourtRegistrationResponse>(`${this.url}/court-registrations`, courtRegistration, this.getHeaders())
-      .subscribe((res) => {
-        if (res.success) {
-          const courtId = res.court_registration.court_id;
-          this.registrationList[courtId] = this.registrationList[courtId] || [];
-          this.registrationList[courtId].push(res.court_registration);
-        }
-      });
+    return this.http.post<CourtRegistrationResponse>(`${this.url}/court-registrations`, courtRegistration, this.getHeaders());
+  }
+
+  // POST method to create a new court
+  addCourt(courtData: Partial<Court>) {
+    return this.http.post<{ success: boolean, court: Court }>(`${this.url}/courts`, courtData, this.getHeaders());
+  }
+
+  // DELETE method to remove a court
+  removeCourt(courtId: number) {
+    return this.http.delete<{ success: boolean }>(`${this.url}/courts/${courtId}`, this.getHeaders());
+  }
+
+  // PATCH method to update an existing court
+  updateCourt(courtId: number, courtData: Partial<Court>) {
+    return this.http.patch<{ success: boolean, court: Court }>(`${this.url}/courts/${courtId}`, courtData, this.getHeaders());
   }
 
   registrationsToList(registrations: CourtRegistration[][]) {

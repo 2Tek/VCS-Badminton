@@ -10,32 +10,35 @@ import { AuthService } from '../../services/auth.service';
 export class CourtRegistrationsPage implements OnInit {
   courts: Court[] = [];
   registrationList: { [courtId: number]: CourtRegistration[] } = {};
+  newCourt: Partial<Court> = {};
+  canAddCourt = false;
 
   constructor(
-    private authService: AuthService,
-    private courtRegistrationService: CourtRegistrationService
+    private courtService: CourtRegistrationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     // Fetch courts and registration list
     this.fetchCourts();
     this.fetchRegistrations();
+    this.checkPermissions();
   }
 
   fetchCourts() {
-    this.courtRegistrationService.getCourts();
+    this.courtService.getCourts();
     // Wait for courtsList to populate
     setTimeout(() => {
-      this.courts = this.courtRegistrationService.courtsList;
+      this.courts = this.courtService.courtsList;
       console.log('Courts:', this.courts); // Debug to ensure data
     }, 500); // Adjust timing as needed for async data
   }
 
   fetchRegistrations() {
-    this.courtRegistrationService.getCourtRegistrations();
+    this.courtService.getCourtRegistrations();
     // Wait for registrationList to populate
     setTimeout(() => {
-      this.registrationList = this.courtRegistrationService.registrationList;
+      this.registrationList = this.courtService.registrationList;
       console.log('Registrations:', this.registrationList); // Debug to ensure data
     }, 500); // Adjust timing as needed for async data
   }
@@ -43,5 +46,27 @@ export class CourtRegistrationsPage implements OnInit {
   // Helper method to get registrations for a specific court
   getRegistrationsForCourt(courtId: number): CourtRegistration[] {
     return this.registrationList[courtId] || [];
+  }
+
+  checkPermissions() {
+    this.canAddCourt = true;// this.authService.can('post:court'); // Check if the user has permission to add a court
+  }
+
+  submitCourtForm() {
+    if (this.newCourt.id && Number.isInteger(this.newCourt.id)) {
+      // Update existing court (PATCH)
+      this.courtService.updateCourt(this.newCourt.id, this.newCourt).subscribe(res => {
+        if (res.success) {
+          this.fetchCourts(); // Reload the courts after updating
+        }
+      });
+    } else {
+      // Add new court (POST)
+      this.courtService.addCourt(this.newCourt).subscribe(res => {
+        if (res.success) {
+          this.fetchCourts(); // Reload the courts after adding
+        }
+      });
+    }
   }
 }

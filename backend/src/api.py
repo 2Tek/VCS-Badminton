@@ -370,7 +370,7 @@ def delete_court_registration(payload):
                 max_players = court.max_players
             registrations = CourtRegistration.query.filter_by(court_id=registration.court_id).all()
             for registration in registrations:
-                if registration.role == 'Waitlist' and len(registrations) =< max_players:
+                if registration.role == 'Waitlist' and len(registrations) <= max_players:
                     registration.role = 'Player'
                     registration.update()
                     break
