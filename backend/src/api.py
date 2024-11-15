@@ -108,7 +108,8 @@ def update_court(payload, id):
         court = Court.query.get(id)
 
         if not court:
-            abort(404)
+            # If the court is not found, create new court with the given payload
+            return create_court(payload)
 
         court.name = body.get('name', court.name)
         court.court_no = body.get('court_no', court.court_no)
@@ -209,7 +210,7 @@ def create_court_registration(payload):
         # check if the court is full for registration to be added to waitlist
         if predefine_role:
             role = predefine_role
-        elif len(registrations) >= max_players:
+        elif len(registrations) > max_players:
             role = 'Waitlist'
         else:
             role = 'Player'       
@@ -369,7 +370,7 @@ def delete_court_registration(payload):
                 max_players = court.max_players
             registrations = CourtRegistration.query.filter_by(court_id=registration.court_id).all()
             for registration in registrations:
-                if registration.role == 'Waitlist' and len(registrations) < max_players:
+                if registration.role == 'Waitlist' and len(registrations) =< max_players:
                     registration.role = 'Player'
                     registration.update()
                     break
