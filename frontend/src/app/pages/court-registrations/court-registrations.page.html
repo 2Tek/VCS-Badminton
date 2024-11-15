@@ -1,4 +1,13 @@
 <div class="container">
+  
+  <!-- Sidebar Toggle Button -->
+  <button 
+    class="btn btn-primary sidebar-toggle" 
+    (click)="toggleSidebar()" 
+    *ngIf="canAddCourt">
+    <span class="plus"></span>
+  </button>
+
   <div class="row">
     <!-- Existing cards for courts -->
     <div class="col-lg-3 col-md-4 col-sm-6 col-12" *ngFor="let court of courts">
@@ -6,12 +15,12 @@
         <!-- Card Header -->
         <div class="card-header">
           <h5 class="card-title mb-0">
-            Court ID: {{ court.id }} {{ court.name }}
+            Court ID: {{court.id}} {{court.name}}
           </h5>
           <p class="card-subtitle">
-            Court No: {{ court.court_no }}, Level: {{ court.level }}, Max Players: {{ court.max_players }}
+            Court No: {{court.court_no}}, Level: {{court.level}}, Max Players: {{court.max_players}}
           </p>
-          <p class="card-subtitle">Date & Time: {{ court.date }} - {{ court.time }}</p>
+          <p class="card-subtitle">Date & Time: {{court.date}} - {{court.time}}</p>
         </div>
 
         <!-- Card Body -->
@@ -22,7 +31,7 @@
               *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index"
               [ngClass]="{'player': reg.role === 'Player', 'waitlist': reg.role === 'Waitlist'}"
             >
-              {{ i + 1 }}. {{ reg.name }} ({{ reg.role }})
+              {{i + 1}}. {{reg.name}} ({{reg.role}})
             </li>
           </ul>
           <ng-template #noRegistrations>
@@ -34,12 +43,12 @@
   </div>
 
   <!-- Sidebar for Adding a New Court -->
-  <div class="ios-sidebar" [class.open]="isSidebarOpen">
-    <div class="ios-sidebar-header">
+  <div class="sidebar" [class.open]="isSidebarOpen">
+    <div class="sidebar-header">
       <h5>Add New Court</h5>
       <button class="btn-close" (click)="toggleSidebar()">×</button>
     </div>
-    <div class="ios-sidebar-body">
+    <div class="sidebar-body">
       <form (ngSubmit)="submitCourtForm()">
         <div class="form-group">
           <label for="courtid">Court ID</label>
@@ -69,13 +78,15 @@
           <label for="maxPlayers">Max Players</label>
           <input type="number" id="maxPlayers" class="form-control" [(ngModel)]="newCourt.max_players" name="max_players" required>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        <button type="submit" class="ios-style-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+          </svg>
+          Submit
+        </button>
       </form>
     </div>
   </div>
 
-  <!-- Sidebar Toggle Button -->
-  <button class="btn btn-primary ios-sidebar-toggle" (click)="toggleSidebar()" *ngIf="canAddCourt">
-    Add New Court
-  </button>
 </div>
