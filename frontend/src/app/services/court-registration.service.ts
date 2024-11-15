@@ -50,6 +50,9 @@ export class CourtRegistrationService {
   }
 
   getCourts() {
+    //clear courtsList
+    this.courtsList = [];
+    // Fetch courts
     this.http.get<{ success: boolean; courts: Court[] }>(this.url + '/courts', this.getHeaders())
       .subscribe({
         next: (res) => {
@@ -74,6 +77,9 @@ export class CourtRegistrationService {
   }
 
   getCourtRegistrations() {
+    // clear registrationList
+    this.registrationList = {};
+    // Fetch court registrations
     this.http.get<CourtRegistrationsResponse>(`${this.url}/court-registrations`, this.getHeaders())
       .subscribe((res) => {
         if (res.success) {
