@@ -14,13 +14,9 @@ CORS(app)
 
 
 # COURT ROUTES
-# Create a new court
-@app.route('/courts', methods=["POST"])
-@requires_auth('post:court')
-def create_court(payload):
+def create_court_helper(body):
     try:
-        body = request.get_json()
-        print("Request Body: ",body)
+        new_id = body.get('id')
         name = body.get('name')
         court_no = body.get('court_no')
         date = body.get('date')
@@ -30,13 +26,6 @@ def create_court(payload):
 
         if not name or not court_no or not date or not time or not max_players or not level:
             abort(400, 'All fields are required.')
-
-        # get the last court by id 
-        # Determine the new court's ID
-        court = Court.query.order_by(desc(Court.id)).first()
-        print("Court: ",court)
-        new_id = (court.id + 1) if court else 1
-        print("New ID: ",new_id)
 
         court = Court(
             id = new_id,
@@ -62,11 +51,41 @@ def create_court(payload):
             'level': court.level
         }
 
-
         return jsonify({
             'success': True,
             'court': court_data
         })
+    except Exception as e:
+        print(f"Create court helper exception: {e}")
+        abort(422)
+
+# Create a new court
+@app.route('/courts', methods=["POST"])
+@requires_auth('post:court')
+def create_court(payload):
+    try:
+        body = request.get_json()
+        print("Request Body: ",body)
+        name = body.get('name')
+        court_no = body.get('court_no')
+        date = body.get('date')
+        time = body.get('time')
+        max_players = body.get('max_players')
+        level = body.get('level')
+
+        if not name or not court_no or not date or not time or not max_players or not level:
+            abort(400, 'All fields are required.')
+
+        # get the last court by id 
+        # Determine the new court's ID
+        court = Court.query.order_by(desc(Court.id)).first()
+        new_id = (court.id + 1) if court else 1
+        #assign new court id to the body
+        body['id'] = new_id
+
+        print("New body: ",body)
+
+        return create_court_helper(body)
     except Exception as e:
         print(f"Create court exception: {e}")
         abort(422)
@@ -109,7 +128,8 @@ def update_court(payload, id):
 
         if not court:
             # If the court is not found, create new court with the given payload
-            return create_court(payload)
+            print("Court not found. Creating new court", body)
+            return create_court_helper(body)
 
         court.name = body.get('name', court.name)
         court.court_no = body.get('court_no', court.court_no)
