@@ -76,6 +76,15 @@ export class CourtRegistrationsPage implements OnInit {
     }
   }
 
+  //deleteCourt base on court id from form
+  deleteCourt(courtId: number) {
+    this.courtService.removeCourt(courtId).subscribe(res => {
+      if (res.success) {
+        this.fetchCourts(); // Reload the courts after deleting
+      }
+    });
+  }
+
   saveRegistration(courtId: number): void {
     const playerUniqueId = this.authService.get_user_id(); // Retrieve player ID
     const reg = {

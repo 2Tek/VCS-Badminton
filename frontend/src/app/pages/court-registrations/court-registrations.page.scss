@@ -56,12 +56,21 @@
     border: 1px solid #ccc; /* Subtle border */
     border-radius: 12px; /* Rounded corners for iOS style */
     padding: 8px 16px; /* Button padding */
+    margin-left: 20px;
     font-size: 14px; /* Font size */
     font-weight: 500; /* Font weight for a cleaner look */
     color: #333; /* Text color */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     transition: all 0.3s ease; /* Smooth transition for hover effects */
     cursor: pointer;
+  }
+
+  //inherit and override background color for delete button
+  .ios-style-btn.delete {
+    background: linear-gradient(90deg, #fe8383, #ff4e4e); /* Soft gradient */
+  }
+  .ios-style-btn.submit {
+    background: linear-gradient(90deg, #85ff89, #a0ff47); /* Soft gradient */
   }
   
   .ios-style-btn svg {
