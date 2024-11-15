@@ -31,6 +31,15 @@
     border: 1px solid #ccc; /* Input border */
     border-radius: 4px; /* Rounded corners */
   }
+
+  button.form-control {
+    height: 100%;
+    margin-left: 20px;
+    padding: 0.2rem; /* Add padding inside the input */
+    font-size: 1rem; /* Input text size */
+    border: 1px solid #ccc; /* Input border */
+    border-radius: 4px; /* Rounded corners */
+  }
   
   input.form-control:focus {
     outline: none; /* Remove default outline */

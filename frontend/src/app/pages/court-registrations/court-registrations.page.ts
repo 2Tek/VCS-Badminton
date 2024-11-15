@@ -13,6 +13,7 @@ export class CourtRegistrationsPage implements OnInit {
   newCourt: Partial<Court> = {};
   canAddCourt = false;
   isSidebarOpen = false;
+  newRegistration: { [courtId: number]: string } = {}; // Holds text box values per court
 
   constructor(
     private courtService: CourtRegistrationService,
@@ -73,5 +74,26 @@ export class CourtRegistrationsPage implements OnInit {
         }
       });
     }
+  }
+
+  saveRegistration(courtId: number): void {
+    const playerUniqueId = this.authService.get_user_id(); // Retrieve player ID
+    const reg = {
+      court_id: courtId,
+      name: this.newRegistration[courtId], // Get value for this court
+      player_unique_id: playerUniqueId,
+    };
+  
+    // Call service to POST registration
+    this.courtService.addRegistration(reg).subscribe(
+      (response) => {
+        console.log('Registration saved successfully:', response);
+        this.fetchRegistrations(); // Refresh the registrations list
+        this.newRegistration[courtId] = ''; // Clear the input box for this court
+      },
+      (error) => {
+        console.error('Error saving registration:', error);
+      }
+    );
   }
 }

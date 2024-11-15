@@ -115,4 +115,9 @@ export class CourtRegistrationService {
       }
     });
   }
+
+  //add function to add registration
+  addRegistration(reg: Partial<CourtRegistration>) {
+    return this.http.post<CourtRegistrationResponse>(`${this.url}/court-registrations`, reg, this.getHeaders());
+  }
 }

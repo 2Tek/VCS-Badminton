@@ -25,7 +25,19 @@
 
         <!-- Card Body -->
         <div class="card-body">
-          <h6 class="registrations-header">Registrations:</h6>
+          <h6 class="registrations-header d-flex align-items-center">
+            Registration:
+            <!-- Text box for input -->
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Enter name"
+              style="width: 100px;"
+              [(ngModel)]="newRegistration[court.id]"
+            />
+            <!-- Save button  -->
+            <button class="form-control" [disabled]="!newRegistration[court.id]" (click)="saveRegistration(court.id)">Save</button>
+          </h6>
           <ul *ngIf="getRegistrationsForCourt(court.id).length > 0; else noRegistrations">
             <li
               *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index"
