@@ -50,7 +50,7 @@ export class CourtRegistrationsPage implements OnInit {
   }
 
   checkPermissions() {
-    this.authService.can('post:court'); // Check if the user has permission to add a court
+    this.canAddCourt = this.authService.can('post:court'); // Check if the user has permission to add a court
   }
 
   toggleSidebar() {
