@@ -230,7 +230,7 @@ def create_court_registration(payload):
         # check if the court is full for registration to be added to waitlist
         if predefine_role:
             role = predefine_role
-        elif len(registrations) > max_players:
+        elif len(registrations) >= max_players:
             role = 'Waitlist'
         else:
             role = 'Player'       
@@ -372,6 +372,19 @@ def delete_court_registration(payload, id):
             abort(404)
 
         reg.delete()
+
+        # get all remain registrations for this court
+        registrations = CourtRegistration.query.filter_by(court_id=reg.court_id).all()
+        # get max players for this court
+        court = Court.query.get(reg.court_id)
+        max_players = court.max_players
+        # reassign role based on max players
+        for i, registration in enumerate(registrations):
+            if i < max_players:
+                registration.role = 'Player'
+            else:
+                registration.role = 'Waitlist'
+            registration.update()
 
         return jsonify({
             'success': True,
