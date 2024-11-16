@@ -84,6 +84,28 @@ export class CourtRegistrationsPage implements OnInit {
       }
     });
   }
+  //deleteRegistration base on court id
+  deleteRegistration(courtId: number, name: string) {
+    //if user has correct permission can retrieve player id
+    const playerUniqueId = this.authService.get_user_id(); // Retrieve player ID
+    const beingDeletedReg = this.registrationList[courtId].find(reg => reg.name.toLowerCase() === name.toLowerCase());
+    if (!beingDeletedReg) {
+      console.error('Player ID not found for registration:', name);
+      return;
+    }
+    console.log('Player ID:', playerUniqueId);
+    console.log('Being deleted ID:', beingDeletedReg);
+    console.log('Can add court:', this.canAddCourt);
+    if (this.canAddCourt || playerUniqueId == beingDeletedReg.player_unique_id) {
+        // get registration id from registrationList base on name, change name and reg.name to lowercase for comparison
+        const _id = this.registrationList[courtId].find(reg => reg.name.toLowerCase() === name.toLowerCase()).id;
+        this.courtService.removeRegistration(_id).subscribe(res => {
+          if (res.success) {
+            this.fetchRegistrations(); // Reload the registrations after deleting
+          }
+        });
+    }
+  }
 
   saveRegistration(courtId: number): void {
     const playerUniqueId = this.authService.get_user_id(); // Retrieve player ID

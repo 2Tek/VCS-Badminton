@@ -120,4 +120,9 @@ export class CourtRegistrationService {
   addRegistration(reg: Partial<CourtRegistration>) {
     return this.http.post<CourtRegistrationResponse>(`${this.url}/court-registrations`, reg, this.getHeaders());
   }
+
+  //implement removeRegistration to api court-registration, sending paritial CourtRegistration
+  removeRegistration(id: number) {
+    return this.http.delete<CourtRegistrationResponse>(`${this.url}/court-registrations/${id}`,this.getHeaders());
+  }
 }

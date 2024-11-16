@@ -363,59 +363,23 @@ def update_court_registration(payload, player_unique_id):
         abort(422)
 
 # Delete a court registration
-@app.route('/court-registrations', methods=["DELETE"])
+@app.route('/court-registrations/<int:id>', methods=["DELETE"])
 @requires_auth('delete:court-registrations')
-def delete_court_registration(payload):
+def delete_court_registration(payload, id):
     try:
-        body = request.get_json()
-        id = body.get('id')
-        player_unique_id = body.get('player_unique_id')
+        reg = CourtRegistration.query.get(id)
+        if not reg:
+            abort(404)
 
-        #get all registrations by player_unique_id
-        registrations = CourtRegistration.query.filter_by(player_unique_id=player_unique_id).all()
-
-        #loop through all registrations and delete them if name and court_id match
-        for registration in registrations:
-            if registration.id == id and registration.player_unique_id == player_unique_id:
-                registration.delete()
-
-        registration.delete()
-
-        #change the role of the next player in the waitlist to player if a player is deleted and there is space
-        if registration.role == 'Player':
-            court = Court.query.get(registration.court_id)
-            if not court:
-                abort(404, 'Court not found.')
-            else:
-                max_players = court.max_players
-            registrations = CourtRegistration.query.filter_by(court_id=registration.court_id).all()
-            for registration in registrations:
-                if registration.role == 'Waitlist' and len(registrations) <= max_players:
-                    registration.role = 'Player'
-                    registration.update()
-                    break
-
-        #get all registration of the court by court_id to confirm data has been updated
-        registrations = CourtRegistration.query.filter_by(court_id=registration.court_id).all()
-        #format registrations to JSON serializable format
-        formatted_registrations = [
-            {
-                'id': registration.id,
-                'court_id': registration.court_id,
-                'name': registration.name,
-                'player_unique_id': registration.player_unique_id,
-                'role': registration.role,
-                'reg_date_time': registration.reg_date_time
-            }
-            for registration in registrations
-        ]
+        reg.delete()
 
         return jsonify({
             'success': True,
-            'updated': formatted_registrations
+            'delete': id
         })
+
     except Exception as e:
-        print(f"Delete court registration exception: {e}")
+        print(f"Delete registration exception: {e}")
         abort(422)
 
 # Error handling
