@@ -2,6 +2,7 @@
 .container {
     padding: 1rem;
     overflow: auto; /* Adds scroll only when needed */
+    margin-top: 1rem; /* Space between the navbar and content */
   }
  
   .btn-close {
@@ -117,62 +118,6 @@
     padding: 1rem;
   }
   
-/* Sidebar Toggle Button */
-.sidebar-toggle {
-    top: 1rem;
-    //left: -60px; /* Initially hidden along with sidebar */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    background-color: #aab4b9;
-    color: #3b3333;
-    border: none;
-    border-radius: 50%;
-    z-index: 1060;
-    cursor: pointer;
-  }
-  
-  .sidebar-toggle:hover {
-    background-color: #6b6d6d;
-    color: #aaa6a6;
-  }
-/* Plus Sign Styling */
-.plus {
-    position: relative;
-    display: block;
-    width: 18px;
-    height: 18px;
-    background: transparent;
-  
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      background-color: #3b3333;
-      border-radius: 2px;
-    }
-  
-    /* Horizontal bar */
-    &::before {
-      width: 18px;
-      height: 2px;
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%);
-    }
-  
-    /* Vertical bar */
-    &::after {
-      width: 2px;
-      height: 18px;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
   /* Align Toggle Button with Sidebar */
   .sidebar.open + .sidebar-toggle {
     left: 310px; /* Adjust based on sidebar width */
