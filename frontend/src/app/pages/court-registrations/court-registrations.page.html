@@ -10,11 +10,11 @@
 
   <div class="row">
     <!-- Existing cards for courts -->
-    <div class="col-lg-3 col-md-4 col-sm-6 col-12" *ngFor="let court of courts">
+    <div *ngFor="let court of courts">
       <div class="card my-3 court-card">
         <!-- Card Header -->
         <div class="card-header">
-          <h5 class="card-title mb-0">
+          <h5 class="card-title mb-0" style="font-weight: bold;">
             Court ID {{court.id}}: {{court.name}}
           </h5>
           <p class="card-subtitle">
@@ -25,14 +25,14 @@
 
         <!-- Card Body -->
         <div class="card-body">
-          <h6 class="registrations-header d-flex align-items-center">
+          <h6 class="registrations-header d-flex align-items-center" style="font-weight: lighter; margin-left: 10px;">
             Name:
             <!-- Text box for input -->
             <input
               type="text"
               class="form-control"
               placeholder="Enter name"
-              style="width: 100px;"
+              style="width: 100px; font-weight: lighter;"
               [(ngModel)]="newRegistration[court.id]"
             />
             <!-- Save button  -->
@@ -41,7 +41,7 @@
                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
               </svg>Register</button>
-            <button class="form-control" [disabled]="!newRegistration[court.id]" (click)="deleteRegistration(court.id, newRegistration[court.id])">
+            <button class="form-control" style="margin-right: 10px;" [disabled]="!newRegistration[court.id]" (click)="deleteRegistration(court.id, newRegistration[court.id])">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                 <path d="M3.5 5.5a.5.5 0 0 1 1 0V13a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V5.5a.5.5 0 0 1 1 0V13a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V5.5z"/>
                 <path fill-rule="evenodd" d="M10.5 1a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h5z"/>
@@ -52,7 +52,7 @@
           <ul *ngIf="getRegistrationsForCourt(court.id).length > 0; else noRegistrations">
             <li
               *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index"
-              [ngClass]="{'player': reg.role === 'Player', 'waitlist': reg.role === 'Waitlist'}"
+              [ngClass]="{'player': reg.role === 'Player', 'waitlist': reg.role === 'Waitlist'}" style="margin-left: 10px;"
             >
               {{i + 1}}. {{reg.name}} ({{reg.role}})
             </li>
@@ -75,7 +75,7 @@
       <form (ngSubmit)="submitCourtForm()">
         <div class="form-group">
           <label for="courtid">Court ID</label>
-          <input type="number" id="courtid" class="form-control" [(ngModel)]="newCourt.id" name="id" required>
+          <input placeholder="Input id to update or delete" type="number" id="courtid" class="form-control" [(ngModel)]="newCourt.id" name="id" required>
         </div>
         <div class="form-group">
           <label for="courtName">Court Name</label>
