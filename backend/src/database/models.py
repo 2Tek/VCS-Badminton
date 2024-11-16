@@ -77,6 +77,7 @@ class CourtRegistration(db.Model):
     player_unique_id = Column(String, nullable=False)
     role = Column(String, nullable=False)
     reg_date_time = Column(String, nullable=False)
+    fee = Column(String, nullable=True)
 
     def insert(self):
         db.session.add(self)
@@ -96,5 +97,6 @@ class CourtRegistration(db.Model):
             'name': self.name,
             'player_unique_id': self.player_unique_id,
             'role': self.role,
-            'reg_date_time': self.reg_date_time
+            'reg_date_time': self.reg_date_time,
+            'fee': self.fee
         })

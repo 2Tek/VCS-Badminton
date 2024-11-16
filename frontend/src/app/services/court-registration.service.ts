@@ -20,6 +20,7 @@ export interface CourtRegistration {
   player_unique_id: string;
   reg_date_time: string;
   role: 'Player' | 'Waitlist';
+  fee: string;
 }
 
 export interface CourtRegistrationsResponse {

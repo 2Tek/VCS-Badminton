@@ -55,7 +55,7 @@ def get_token_auth_header():
     return token
 
 def check_permissions(permission, payload):
-    print("Payload:",payload)
+    #print("Payload:",payload)
     if 'permissions' not in payload:
                         raise AuthError({
                             'code': 'invalid_claims',
@@ -141,8 +141,8 @@ def requires_auth(permission=''):
             
             token = get_token_auth_header()
             payload = verify_decode_jwt(token)
-            print(token)
-            print(payload)
+            #print(token)
+            #print(payload)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
 

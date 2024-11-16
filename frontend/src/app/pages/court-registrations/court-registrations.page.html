@@ -54,7 +54,7 @@
               *ngFor="let reg of getRegistrationsForCourt(court.id); let i = index"
               [ngClass]="{'player': reg.role === 'Player', 'waitlist': reg.role === 'Waitlist'}" style="margin-left: 10px;"
             >
-              {{i + 1}}. {{reg.name}} ({{reg.role}})
+              {{i + 1}}. {{reg.name}} ({{reg.role}}) ({{reg.fee}})
             </li>
           </ul>
           <ng-template #noRegistrations>

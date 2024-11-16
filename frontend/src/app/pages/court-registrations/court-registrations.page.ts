@@ -103,6 +103,10 @@ export class CourtRegistrationsPage implements OnInit {
           }
         });
     }
+    else if (playerUniqueId != beingDeletedReg.player_unique_id) {
+      //popups a message if user does not have permission to delete other player registration
+      alert('You do not have permission to delete other player registration');
+    }
   }
 
   saveRegistration(courtId: number): void {

@@ -5,11 +5,12 @@ from flask_cors import CORS
 from datetime import datetime
 from pytz import timezone
 
-from .database.models import setup_db, Court, CourtRegistration
-from .auth.auth import AuthError, requires_auth
+from .database.models import db_drop_all, setup_db, Court, CourtRegistration
+from .auth.auth import AuthError, requires_auth, check_permissions
 
 app = Flask(__name__)
 setup_db(app)
+#db_drop_all()
 CORS(app)
 
 
@@ -176,6 +177,21 @@ def delete_court(payload, id):
         registrations = CourtRegistration.query.filter_by(court_id=id).all()
         for registration in registrations:
             registration.delete()
+        
+        #update registration fee for all players who have more than 1 registration
+        all_registrations = CourtRegistration.query.all()
+        for registration in all_registrations:
+            #get all registrations for this player, order by id
+            player_registrations = CourtRegistration.query.filter_by(player_unique_id=registration.player_unique_id, name=registration.name).order_by(CourtRegistration.id).all()
+            if len(player_registrations) > 0:
+                for i, player_registration in enumerate(player_registrations):
+                    print("i: ",i)
+                    if i == 0:
+                        player_registration.fee = None
+                        player_registration.update()
+                    if i > 0:
+                        player_registration.fee = '$'
+                        player_registration.update()
 
         return jsonify({
             'success': True,
@@ -193,7 +209,6 @@ def delete_court(payload, id):
 def create_court_registration(payload):
     try:
         body = request.get_json()
-        print("Request Body: ",body)
         court_id = body.get('court_id')
         name = body.get('name')
         player_unique_id = body.get('player_unique_id')
@@ -202,12 +217,18 @@ def create_court_registration(payload):
         if not court_id or not name or not player_unique_id:
             abort(400, 'All fields are required.')
         
-        # get the last court by id 
-        # Determine the new court's ID
+        # get the last reg by id 
+        # Determine the new reg's ID
         reg = CourtRegistration.query.order_by(desc(CourtRegistration.id)).first()
-        print("reg: ",reg)
         new_id = (reg.id + 1) if reg else 1
-        print("New ID: ",new_id)
+
+        # get how many registration from same player based on name and unique id
+        previous_reg = CourtRegistration.query.filter_by(player_unique_id=player_unique_id, name=name).all()
+        if len(previous_reg) >= 1:
+            fee = '$'
+        else:
+            fee = None
+
 
         # get current time in SGT time zone to string
         reg_time = datetime.now(timezone('Asia/Singapore')).strftime('%Y-%m-%d %H:%M:%S')
@@ -241,7 +262,8 @@ def create_court_registration(payload):
             name=name,
             player_unique_id=player_unique_id,
             role=role,
-            reg_date_time=reg_time
+            reg_date_time=reg_time,
+            fee=fee
         )
         court_registration.insert()
 
@@ -254,7 +276,8 @@ def create_court_registration(payload):
             'name': court_registration.name,
             'player_unique_id': court_registration.player_unique_id,
             'role': court_registration.role,
-            'reg_date_time': court_registration.reg_date_time
+            'reg_date_time': court_registration.reg_date_time,
+            'fee': court_registration.fee
         }
 
         return jsonify({
@@ -283,7 +306,8 @@ def get_all_registrations(payload):
                     'name': registration.name,
                     'player_unique_id': registration.player_unique_id,
                     'role': registration.role,
-                    'reg_date_time': registration.reg_date_time
+                    'reg_date_time': registration.reg_date_time,
+                    'fee': registration.fee
                 }
                 for registration in registrations
             ]
@@ -310,7 +334,8 @@ def get_court_registrations(payload, court_id):
                 'name': registration.name,
                 'player_unique_id': registration.player_unique_id,
                 'role': registration.role,
-                'reg_date_time': registration.reg_date_time
+                'reg_date_time': registration.reg_date_time,
+                'fee': registration.fee
             }
             for registration in registrations
         ]
@@ -351,7 +376,8 @@ def update_court_registration(payload, player_unique_id):
             'name': registration.name,
             'player_unique_id': registration.player_unique_id,
             'role': registration.role,
-            'reg_date_time': registration.reg_date_time
+            'reg_date_time': registration.reg_date_time,
+            'fee': registration.fee
         }
 
         return jsonify({
@@ -370,6 +396,11 @@ def delete_court_registration(payload, id):
         reg = CourtRegistration.query.get(id)
         if not reg:
             abort(404)
+        
+        #get sub from payload, then check if the sub is the same as the player_unique_id
+        sub = payload['sub']
+        if reg.player_unique_id != sub and not ('post:court' in payload['permissions'] or '*:*' in payload['permissions']):
+            abort(403, 'Forbidden. You are not allowed to delete this registration.')
 
         reg.delete()
 
@@ -385,6 +416,22 @@ def delete_court_registration(payload, id):
             else:
                 registration.role = 'Waitlist'
             registration.update()
+        
+        # get all registrations of all courts, for each player who has more than 1 registration, set fee to '$' for the second registration onwards
+        # only set fee from the second registration onwards, the first registration is free
+        all_registrations = CourtRegistration.query.filter_by(player_unique_id=reg.player_unique_id).all()
+        for registration in all_registrations:
+            #get all registrations for this player, order by id
+            player_registrations = CourtRegistration.query.filter_by(player_unique_id=registration.player_unique_id, name=registration.name).order_by(CourtRegistration.id).all()
+            if len(player_registrations) > 0:
+                for i, player_registration in enumerate(player_registrations):
+                    print("i: ",i)
+                    if i == 0:
+                        player_registration.fee = None
+                        player_registration.update()
+                    if i > 0:
+                        player_registration.fee = '$'
+                        player_registration.update()
 
         return jsonify({
             'success': True,
