@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiServerUrl: 'http://127.0.0.1:5000', // the running FLASK api server url
+  //apiServerUrl: 'http://127.0.0.1:5000', // the running FLASK api server url
+  apiServerUrl: 'https://vcs-badminton.onrender.com', // the running FLASK api server url
   auth0: {
     url: 'dev-i23mn0tn47hz887e.us', // the auth0 domain prefix
     audience: 'https://udacity-coffee-auth0-api/', // the audience set for the auth0 app
