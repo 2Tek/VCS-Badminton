@@ -10,6 +10,6 @@ export const environment = {
     url: 'dev-i23mn0tn47hz887e.us', // the auth0 domain prefix
     audience: 'https://udacity-coffee-auth0-api/', // the audience set for the auth0 app
     clientId: 'gNSiFojbM21dZhL2UqkYnrGBf4SHwdY7', // the client id generated for the auth0 app
-    callbackURL: 'https://vcs-badminton-website.onrender.com', // the base url of the running ionic application. 
+    callbackURL: 'https://vcs-badminton-website.onrender.com/tabs/user-page', // the base url of the running ionic application. 
   }
 };
