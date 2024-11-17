@@ -26,6 +26,7 @@ export class AuthService {
     link += '/authorize?';
     link += 'audience=' + this.audience + '&';
     link += 'response_type=token&';
+    link += 'response_mode=query&'; // Use query parameters
     link += 'client_id=' + this.clientId + '&';
     link += 'redirect_uri=' + this.callbackURL + callbackPath;
     return link;
@@ -33,13 +34,9 @@ export class AuthService {
 
   // invoked in app.component on load
   check_token_fragment() {
-    // parse the fragment
-    const fragment = window.location.hash.substr(1).split('&')[0].split('=');
-    // check if the fragment includes the access token
-    if ( fragment[0] === 'access_token' ) {
-      // add the access token to the jwt
-      this.token = fragment[1];
-      // save jwts to localstore
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('access_token')) {
+      this.token = params.get('access_token');
       this.set_jwt();
     }
   }
