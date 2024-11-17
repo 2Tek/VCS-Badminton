@@ -47,13 +47,13 @@ Each time you open a new terminal session, run:
 
 ```bash
 #on Mac/Linux
-export FLASK_APP=api.py;
+export FLASK_APP=app.py;
 
 #on Windows powershell
-$env:FLASK_APP = "api.py"
+$env:FLASK_APP = "app.py"
 
 #on Windows command prompt
-set FLASK_APP=api.py
+set FLASK_APP=app.py
 ```
 
 To run the server, execute:
