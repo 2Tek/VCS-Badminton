@@ -16,6 +16,7 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar
   ) {
+    this.auth.check_token_fragment();
     this.initializeApp();
   }
 
@@ -26,7 +27,7 @@ export class AppComponent {
 
       // Perform required auth actions
       this.auth.load_jwts();
-      this.auth.check_token_fragment();
+      
     });
   }
 }

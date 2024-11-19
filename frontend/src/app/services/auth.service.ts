@@ -36,7 +36,7 @@ export class AuthService {
     // Parse the URL fragment
     const fragment = window.location.hash.substr(1);
     const params = new URLSearchParams(fragment);
-  
+    console.log('Fragment: ', fragment);
     if (params.has('access_token')) {
       this.token = params.get('access_token') || '';
       this.set_jwt();
