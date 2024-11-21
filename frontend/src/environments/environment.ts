@@ -11,5 +11,6 @@ export const environment = {
     audience: 'https://udacity-coffee-auth0-api/', // the audience set for the auth0 app
     clientId: 'gNSiFojbM21dZhL2UqkYnrGBf4SHwdY7', // the client id generated for the auth0 app
     callbackURL: 'https://vcs-badminton-website.onrender.com', // the base url of the running ionic application. 
+    //callbackURL: 'http://localhost:8100', // the base url of the running ionic application.
   }
 };
