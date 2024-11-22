@@ -208,7 +208,7 @@ def delete_court(payload, id):
 # COURT REGISTRATION ROUTES
 # Register a player to a court
 @app.route('/court-registrations', methods=["POST"])
-#@requires_auth('post:court-registration')
+@requires_auth('post:court-registration')
 def create_court_registration(payload):
     try:
         body = request.get_json()
@@ -292,7 +292,7 @@ def create_court_registration(payload):
         abort(422)
 # Get all registrations from all court
 @app.route('/court-registrations', methods=["GET"])
-#@requires_auth('get:court-registrations')
+@requires_auth('get:court-registrations')
 def get_all_registrations(payload):
     try:
         # get all available courts
@@ -325,7 +325,7 @@ def get_all_registrations(payload):
         abort(422)
 # Get all registrations for a specific court
 @app.route('/court-registrations/<int:court_id>', methods=["GET"])
-#@requires_auth('get:court-registrations')
+@requires_auth('get:court-registrations')
 def get_court_registrations(payload, court_id):
     try:
         registrations = CourtRegistration.query.filter_by(court_id=court_id).all()
@@ -354,7 +354,7 @@ def get_court_registrations(payload, court_id):
 # Update a court registration
 # There is some room to update this route to allow for updating the role of a player
 @app.route('/court-registrations/<string:player_unique_id>', methods=["PATCH"])
-#@requires_auth('patch:court-registrations')
+@requires_auth('patch:court-registrations')
 def update_court_registration(payload, player_unique_id):
     try:
         body = request.get_json()
