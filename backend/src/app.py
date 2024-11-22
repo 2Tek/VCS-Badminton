@@ -1,15 +1,18 @@
 from flask import Flask, request, jsonify, abort
+from flask_migrate import Migrate
+
 from sqlalchemy import exc, desc
 import json
 from flask_cors import CORS
 from datetime import datetime
 from pytz import timezone
 
-from .database.models import db_drop_all, setup_db, Court, CourtRegistration
+from .database.models import db, db_drop_all, setup_db, Court, CourtRegistration
 from .auth.auth import AuthError, requires_auth, check_permissions
 
 app = Flask(__name__)
 setup_db(app)
+migrate = Migrate(app, db)
 #db_drop_all()
 CORS(app)
 
