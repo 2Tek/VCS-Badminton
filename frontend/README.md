@@ -1,5 +1,5 @@
 
-# Coffee Shop Frontend
+# Court Registration Frontend
 
 ## Getting Setup
 
@@ -31,19 +31,6 @@ This project uses NPM to manage software dependencies. NPM Relies on the package
 
 ```bash
 npm install
-```
-
-> _note_: If you encounter issues with `node-sass`, ensure `sass` is installed instead:
-
-```bash
-npm uninstall node-sass
-npm install node-sass@4.14.1
-```
-> _tip_: **npm i** is shorthand for **npm install**
-
-> _note_: If you encounter an error related to python2 while installing dependencies, you might need to install Python  Use the following command if necessary:
-```bash
-brew install python@2
 ```
 
 ## Required Tasks
