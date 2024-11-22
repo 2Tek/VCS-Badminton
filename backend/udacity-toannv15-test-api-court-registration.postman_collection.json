@@ -30,19 +30,21 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldJZm9fSE1iYTFMdDJIa3ozWkJyQyJ9.eyJpc3MiOiJodHRwczovL2Rldi1pMjNtbjB0bjQ3aHo4ODdlLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNTg2NzI2NjcyNDEwNTM5NTk5MiIsImF1ZCI6Imh0dHBzOi8vdWRhY2l0eS1jb2ZmZWUtYXV0aDAtYXBpLyIsImlhdCI6MTczMTQyNTQzMywiZXhwIjoxNzMxNTExODMzLCJzY29wZSI6IiIsImF6cCI6ImdOU2lGb2piTTIxZFpoTDJVcWtZbnJHQmY0U0h3ZFk3IiwicGVybWlzc2lvbnMiOlsiZGVsZXRlOmNvdXJ0LXJlZ2lzdHJhdGlvbnMiLCJnZXQ6Y291cnQtcmVnaXN0cmF0aW9ucyIsInBhdGNoOmNvdXJ0LXJlZ2lzdHJhdGlvbnMiLCJwb3N0OmNvdXJ0LXJlZ2lzdHJhdGlvbiJdfQ.j3OUY5_9iKM7EpayT6ZwwY1cAnCGfiu-Q2vWYhqJapIOfZzgWEjF_IELP3Rmzmb0GZeFBL-uqr2Bt-tezBFsJN0gTBwNpCtcd2GIGtOCSQt15GCHCnhau5IvY0TSVjQ2pn1AsJL5egRxY8SIXmICLWUAQOmT4qn7ZawIYlSiiIYfU8ok7NdsltAhJe-qDGVQH5h-fjBEvkVeAzVwSPnGoSe_si4KQf7xRy30TEthgRm5IHflhhvph_5KsU2_7VeX-GSvAaNVcVHVHhFTTle0uf3Ao5cVBwgYekGAp4PW0ZSgpCIMz7hK4AIDZgtLdc-KfcQDlkiIV10cHdFGWX_ptg",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{host}}/court-registrations/1",
 							"host": [
@@ -423,7 +425,7 @@
 	"variable": [
 		{
 			"key": "host",
-			"value": "localhost:5000",
+			"value": "https://vcs-badminton.onrender.com/",
 			"type": "string"
 		}
 	]
