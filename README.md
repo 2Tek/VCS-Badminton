@@ -1,35 +1,52 @@
-# Coffee Shop Full Stack
+# For submission review:
+1. Deployed on: Render.com
+2. Assement Link:
+- Singple Webpage Application: 
+https://vcs-badminton-website.onrender.com
+- Web Service: `https://vcs-badminton.onrender.com`
+- Database External URL for verification if any: `postgresql://vcsbadminton_user:NMmOJFXkO58FjcZSH8RsSOj7yAD64GX5@dpg-cssofb23esus739op580-a.singapore-postgres.render.com/vcsbadminton`
+# Project Rubrics
+## Data Modeling
+1. Architect relational database models in Python
+2. Utilize SQLAlchemy to conduct database queries
+- No raw sql used
+- Correct applied SQLAlchemy to define model
+- Creates methods to serialize model data and helper methods to simplify API behavior such as insert, update and delete.
+## API Architecture and Testing
+1. Follow RESTful principles of API development
+  - RESTful principles are followed throughout the project, including appropriate naming of endpoints, use of HTTP methods GET, POST, PATCH, and DELETE
+  - Routes perform CRUD operations
+3. Structure endpoints to respond to four HTTP methods, including error handling
+4. Enable Role Based Authentication and roles-based access control (RBAC) in a Flask application
+- Player able to:
+    - `delete:court-registrations`
+    - `get:court-registrations`
+    - `patch:court-registrations`
+    - `post:court-registration`
+ - Admin able to:
+    - `delete:courts`
+    - `get:courts`
+    - `patch:courts`
+    - `post:court`
+5. Demonstrate validity of API behavior
+API behavior can be tested through given postman collection
+## Third-Party Authentication
+- The Auth0 Domain Name
+- The JWT code signing secret
+- The Auth0 Client ID
+- Roles and permission tables are configured in Auth0.
+- Access of roles is limited. Includes at least two different roles with different permissions.
+- The JWT includes the RBAC permission claims.
+## Deployment
+1. Application is hosted live at student provided URL
+https://vcs-badminton-website.onrender.com
+2. Includes instructions to set up authentication
+- Go to User tab
+- Click login button
+- Default user can CRUD to enroll game
+- Only admin role can create and delete court
+## Code Quality & Documentation
+1. Write clear, concise, and well-documented code
+2. Project demonstrates reliability and testability
+3. Project demonstrates maintainability
 
-## Full Stack Nano - IAM Final Project
-
-Udacity has decided to open a new digitally enabled cafe for students to order drinks, socialize, and study hard. But they need help setting up their menu experience.
-
-You have been called on to demonstrate your newly learned skills to create a full stack drink menu application. The application must:
-
-1. Display graphics representing the ratios of ingredients in each drink.
-2. Allow public users to view drink names and graphics.
-3. Allow the shop baristas to see the recipe information.
-4. Allow the shop managers to create new drinks and edit existing drinks.
-
-## Tasks
-
-There are `@TODO` comments throughout the project. We recommend tackling the sections in order. Start by reading the READMEs in:
-
-1. [`./backend/`](./backend/README.md)
-2. [`./frontend/`](./frontend/README.md)
-
-## About the Stack
-
-We started the full stack application for you. It is designed with some key functional areas:
-
-### Backend
-
-The `./backend` directory contains a partially completed Flask server with a pre-written SQLAlchemy module to simplify your data needs. You will need to complete the required endpoints, configure, and integrate Auth0 for authentication.
-
-[View the README.md within ./backend for more details.](./backend/README.md)
-
-### Frontend
-
-The `./frontend` directory contains a complete Ionic frontend to consume the data from the Flask server. You will only need to update the environment variables found within (./frontend/src/environment/environment.ts) to reflect the Auth0 configuration details set up for the backend app.
-
-[View the README.md within ./frontend for more details.](./frontend/README.md)
