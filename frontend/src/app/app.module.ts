@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 
 import { DrinksService } from './services/drinks.service';
 import { AuthService } from './services/auth.service';
+import { CourtRegistrationService } from './services/court-registration.service';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -30,6 +31,7 @@ import { from } from 'rxjs';
     SplashScreen,
     AuthService,
     DrinksService,
+    CourtRegistrationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
