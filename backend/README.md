@@ -104,6 +104,11 @@ The `--reload` flag will detect file changes and restart the server automaticall
 1. While in virtual environment, change to source directory
 2. Execute command to run test
 ```
-pytest test/
+at backend/
+$env:DATABASE_URL = "sqlite:///$($PWD)\src\database\database.db"
+$env:AUTH0_DOMAIN = "dev-i23mn0tn47hz887e.us.auth0.com"
+$env:ALGORITHMS = "['RS256']"
+$env:API_AUDIENCE = "https://udacity-coffee-auth0-api/"
+python -m src.tests.test_auth
 ```
-3. Current test will  output 3 PASS and 3 FAIL for project capstone purose
+3. Current test will  output 6 PASS and 6 FAIL for project capstone purpose
